@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block head %}
+
+<title>BI Stock Recommender</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
+{% endblock %}
+
+{% block body %}
+<!-- Header -->
+<div class="row row-lg">
+	<div class="col col-lg-2 header-col">
+		<h1>{%print(ticker)%}</h1>
+	</div>
+	
+	<div class="col col-lg-2 header-col">
+		<img id="logo_img">
+	</div>
+
+	<div class="col col-lg-2 header-col">
+		<p><strong>HQ Location:</strong> {%print(city)%}, {%print(country)%}</p>
+		<p><strong>Exchange:</strong> {%print(exchange)%}</p>
+	</div>
+
+	<div class="col col-lg-2 header-col">
+		<p><strong>Industry:</strong> {%print(industry)%}</p>
+		<p><strong>Sector:</strong> {%print(sector)%}</p>
+	</div>
+</div>
+
+<br>
+<hr>
+<br>
+
+<!-- Predictions -->
+<div class="row row-lg">
+	<div class="col">
+		<h4>Analysis</h4>
+	</div>
+</div>
+
+<br>
+
+<div class="row row-lg">
+	<div class="col col-lg-7">
+		<div id="container_graph"></div>
+	</div>
+	<div class="col col-lg-5 graph-col">
+		<div id="container_graph_2"></div>
+	</div>
+</div>
+
+<div class="row row-lg">
+	<div class="col col-lg-7">
+		<p>    <strong>Validation RMSE:</strong> <a id="arima_rmse"></a></p>
+		<p>    <strong>Validation MAPE:</strong> <a id="arima_mape"></a>%</p>
+		<p>    <strong>Next Day Prediction:</strong> <a id="arima_prediction"></a></p>
+	</div>
+	<div class="col col-lg-5">
+		<p>    <strong>Validation RMSE:</strong> <a id="ensemble_rmse"></a></p>
+		<p>    <strong>Validation MAPE:</strong> <a id="ensemble_mape"></a>%</p>
+		<p>    <strong>Next Day Prediction:</strong> <a id="ensemble_prediction"></a></p>
+	</div>
+</div>
+
+<br>
+<br>
+
+<div class="row row-lg">
+	<div class="col col-lg-7">
+		<div id="container_graph_3"></div>
+	</div>
+	<div class="col col-lg-3">
+		<div id="tweet-score">
+			<h6>Tweet Score for the Past Week:</h6>
+			<p>{%print(twitter_sentiment)%}% of Tweets Positive</p>
+		</div>
+	</div>
+</div>
+
+<div class="row row-lg">
+	<div class="col col-lg-7">
+		<p>    <strong>Validation Accuracy:</strong> <a id="rec_accuracy"></a></p>
+		<p>    <strong>Next Day Recommendation:</strong> <a id="rec_prediction"></a></p>
+	</div>
+</div>
+
+<br>
+<hr>
+<br>
+
+<!-- Company Financials -->
+<div class="row row-lg">
+	<div class="col">
+		<h4>Company Financials</h4>
+	</div>
+</div>
+
+<br>
+
+<div class="row row-lg">
+	<div class="col col-lg-6" style="border: 1px black solid; padding-top: 10px; 
+	margin-right: 5px;">
+		<div class="row row-lg">
+			<div class="col col-lg-6">
+				<h6><u><strong style="color:gray;">Summary Metrics</strong></u></h6>
+			</div>
+		</div>
+		<div class="row row-lg">
+			<div class="col">
+				<p><strong>Open:</strong> {%print(day_open)%}</p>
+				<p><strong>High:</strong> {%print(day_high)%}</p>
+				<p><strong>Low:</strong> {%print(day_low)%}</p>
+			</div>
+
+			<div class="col">
+				<p><strong>Mkt Cap:</strong> {%print(market_cap)%} B</p>
+				<p><strong>P/E:</strong> {%print(pe_ratio)%}</p>
+				<p><strong>Div Yield:</strong> {%print(div_yield)%}%</p>
+			</div>
+
+			<div class="col">
+				<p><strong>52w High:</strong> {%print(high_52w)%}</p>
+				<p><strong>52w Low:</strong> {%print(low_52w)%}</p>
+				<p><strong>52w Change:</strong> {%print(change_52w)%}%</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="col col-lg-5" style="border: 1px black solid; padding-top: 10px;
+	margin-left: 5px;">
+		<div class="row row-lg">
+			<div class="col col-lg-6">
+				<h6><u><strong style="color:gray;">Most Recent - 10K</strong></u></h6>
+			</div>
+		</div>
+		<div class="row row-lg">
+			<div class="col">
+				<p><strong>Total Revenue:</strong> {%print(revenue)%} B</p>
+				<p><strong>EBITDA:</strong> {%print(ebitda)%} B</p>
+				<p><strong>EPS:</strong> {%print(eps)%}</p>
+			</div>
+			<div class="col">
+				<p><strong>Shares Outstanding:</strong> {%print(shares_outstanding)%} B</p>
+				<p><strong>Gross Profit:</strong> {%print(gross_profit)%} B</p>
+				<p><strong>Free Cash Flow:</strong> {%print(free_cash_flow)%} B</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<br>
+<hr>
+<br>
+
+<!-- Company News -->
+<div class="row row-lg">
+	<div class="col">
+		<h4>Company News</h4>
+	</div>
+</div>
+
+<br>
+
+<div class="row row-lg" id="news-row">
+	<table id="news-table" style="width: 80%;">
+		<tr id="first-row">
+			<th>Publisher</th>
+			<th>Title</th>
+			<th>Published Time</th>
+		</tr>
+	</table>
+</div>
+
+<br>
+<hr>
+<br>
+
+<!-- Dataset -->
+<div class="row row-lg">
+	<div class="col">
+		<h4>The Dataset</h4>
+	</div>
+</div>
+
+<br>
+
+<div class="row row-lg" id="stock-row">
+	<div class="col">
+		<h6><strong>Input</strong></h6>
+		<table id="hist-table" style="width: 80%;">
+			<thead>
+				<tr id="first-row">
+					<th>Stock Dates</th>
+					<th>Stock Open</th>
+					<th>Stock Close</th>
+					<th>Stock Volume</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for row in historical_table %}
+				<tr>
+					{% for cell in row %}
+					<td>{{ cell }}</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
+<script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-base.min.js"></script>
+<script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+<script src="{{ url_for('static', filename='js/news.js') }}"></script>
+<!-- <script src="{{ url_for('static', filename='js/table.js') }}"></script> -->
+
+<!-- NEWS SCRIPT -->
+<script type="text/javascript">
+	// ADD LOGO
+	var icon_link = {{ logo_url | tojson }}.toString()
+	document.getElementById('logo_img').src = icon_link
+
+	// ADD GRAPHS
+	var historical_dict = {{ historical | tojson }}
+	var arima_dict = {{ arima | tojson }}
+	var ensemble_dict = {{ ensemble | tojson }}
+	var rec_historical_dict = {{ rec_historical | tojson }}
+	var rec_dict = {{ rec | tojson }}
+
+	console.log(historical_dict)
+	console.log(ensemble_dict)
+	createCharts(historical_dict, arima_dict, "container_graph", "ARIMA", "Open Price")
+	createCharts(historical_dict, ensemble_dict, "container_graph_2", "Ensemble", "Open Price")
+	createCharts(rec_historical_dict, rec_dict, "container_graph_3", "ARIMA Recommendation", "Open Price Change (%)")
+
+	// ADD METRICS
+	document.getElementById('arima_rmse').innerHTML = arima_dict['val_rmse']
+	document.getElementById('arima_mape').innerHTML = arima_dict['val_mape']
+	document.getElementById('arima_prediction').innerHTML = arima_dict['price_next_day']
+
+	document.getElementById('ensemble_rmse').innerHTML = ensemble_dict['val_rmse']
+	document.getElementById('ensemble_mape').innerHTML = ensemble_dict['val_mape']
+	document.getElementById('ensemble_prediction').innerHTML = ensemble_dict['price_next_day']
+
+	document.getElementById('rec_accuracy').innerHTML = rec_dict['accuracy']
+	document.getElementById('rec_prediction').innerHTML = rec_dict['next_day_rec']
+
+	// ADD NEWS
+	var news_json = {{news_info | tojson}}
+	populateNews(news_json)
+
+	// CONVERT TABLE
+	$(document).ready( function () {
+		$('#hist-table').DataTable();
+	} );
+</script>
+
+{% endblock %}

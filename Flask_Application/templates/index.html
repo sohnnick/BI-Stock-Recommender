@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block head %}
+
+<title>BI Stock Recommender</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+
+{% endblock %}
+
+{% block body %}
+
+<div class="row-md">
+	<div class="col-md-8 center-div center-text">
+
+		<h1><strong>BI Stock Recommender</strong></h1>
+		<img src="../static/media/wolfofwallst.gif">
+		<br>
+		<br>
+		<h3><span style="color: #6F6F6F;">The Date Today is:</span> <strong>{%print(date)%}</strong></h3>
+
+	</div>
+</div>
+
+<br>
+
+<div class="row-md">
+	<div class="col-md-8 center-div">
+
+		<form action="{{ url_for('predict')}}" method="POST" id="input-form">
+
+			<p><strong>Please pick a stock ticker:</strong></p>
+
+			<select name="stock-tickers">
+				<option value="MSFT">MSFT</option>
+				<option value="AAPL">AAPL</option>
+				<option value="FB">FB</option>
+				<option value="GOOGL">GOOGL</option>
+				<option value="TSLA">TSLA</option>
+				<option value="PLTR">PLTR</option>
+				<option value="DKNG">DKNG</option>
+				<option value="TWTR">TWTR</option>
+				<option value="NKE">NKE</option>
+				<option value="KO">KO</option>
+				<option value="T">T</option>
+				<option value="F">F</option>
+				<option value="SONY">SONY</option>
+				<option value="DKNG">DKNG</option>
+				<option value="GE">GE</option>
+				<option value="NFLX">NFLX</option>
+				
+			</select>
+
+			<input type="submit" name="send_ticker">
+		</form>
+
+	</div>
+</div>
+
+{% endblock %}
