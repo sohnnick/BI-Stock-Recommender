@@ -20,3 +20,6 @@ Flask, Python, Javascript, HTML&CSS
 ### How it Looks
 
 <img src="Images/site.gif" alt="home" width="500" />
+
+https://user-images.githubusercontent.com/31304876/177807660-ebe02ced-ae07-4679-8f19-b7a4164596c0.mp4
+
