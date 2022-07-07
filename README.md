@@ -8,6 +8,7 @@ $ export FLASK_APP=app
 $ flask run
  * Running on http://127.0.0.1:5000/
 ```
+In addition, add a config.py for your Twitter API credentials.
 
 ### Libraries
 
@@ -20,4 +21,3 @@ Flask, Python, Javascript, HTML&CSS
 ### How it Looks
 
 https://user-images.githubusercontent.com/31304876/177807660-ebe02ced-ae07-4679-8f19-b7a4164596c0.mp4
-
